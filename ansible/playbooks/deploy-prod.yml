@@ -1,6 +1,8 @@
 - name: Déploiement PROD
   hosts: prod
   become: yes
+  vars:
+    git_branch: main
 
   roles:
     - app
