@@ -1,13 +1,1 @@
-# Dossiers / fichiers générés
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Virtualenv
-env/
-venv/
-
-# Config IDE
-.vscode/
-.idea/
+*.log

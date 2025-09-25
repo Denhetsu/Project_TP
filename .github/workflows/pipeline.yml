@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [dev, main]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Run test (just check script works locally)
+        run: |
+          cd app
+          chmod +x run.sh
+          ./run.sh
+          test -f app.log && echo "Test OK"
+
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Deploy to DEV
+        if: github.ref == 'refs/heads/dev'
+        run: ansible-playbook ansible/playbooks/deploy-dev.yml -i ansible/inventory/dev.ini
+
+      - name: Deploy to PROD
+        if: github.ref == 'refs/heads/main'
+        run: ansible-playbook ansible/playbooks/deploy-prod.yml -i ansible/inventory/prod.ini
