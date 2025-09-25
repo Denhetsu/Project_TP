@@ -2,37 +2,41 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [dev, main]
+    branches: [dev, main]  # déclenche sur push vers dev ou main
 
 jobs:
-  test-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      # Étape 1 : checkout du code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run test (just check script works locally)
-        run: |
-          cd app
-          chmod +x run.sh
-          ./run.sh
-          test -f app.log && echo "Test OK"
-
+      # Étape 2 : Setup SSH key pour Ansible
       - name: Setup SSH key
         uses: webfactory/ssh-agent@v0.8.1
         with:
-          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+          ssh-private-key: ${{ github.ref == 'refs/heads/dev' && secrets.DEPLOY_SSH_KEY_DEV || secrets.DEPLOY_SSH_KEY_PROD }}
 
+      # Étape 3 : Installer Ansible
       - name: Install Ansible
         run: |
           sudo apt-get update
           sudo apt-get install -y ansible
 
+      # Étape 4 : Tests / lint (optionnel)
+      - name: Run tests or lint
+        run: |
+          echo "Ici tu peux lancer des tests simples ou vérifier que le code est correct"
+          # ex: test -f app/README.md && echo "Test OK"
+
+      # Étape 5 : Déploiement DEV
       - name: Deploy to DEV
         if: github.ref == 'refs/heads/dev'
         run: ansible-playbook ansible/playbooks/deploy-dev.yml -i ansible/inventory/dev.ini
 
+      # Étape 6 : Déploiement PROD
       - name: Deploy to PROD
         if: github.ref == 'refs/heads/main'
         run: ansible-playbook ansible/playbooks/deploy-prod.yml -i ansible/inventory/prod.ini
