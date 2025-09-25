@@ -13,7 +13,7 @@
 
     - name: Cloner le dépôt depuis GitHub
       git:
-        repo: 'https://github.com/ton_user/ton_repo.git'
+        repo: 'https://github.com/Denhetsu/Project_TP.git'
         dest: /opt/app
         force: yes
 
