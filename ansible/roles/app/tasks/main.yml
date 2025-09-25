@@ -1,6 +1,5 @@
 ---
  tasks:
-
     - name: Installer les dépendances
       apt:
         name:
