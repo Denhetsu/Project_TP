@@ -19,7 +19,7 @@
 
     - name: Générer la page pour Nginx
       template:
-        src: ../../roles/app/templates/index.html.j2  # chemin relatif depuis playbook
+        src: ../roles/app/templates/index.html.j2  # chemin relatif depuis playbook
         dest: /var/www/html/index.html
         owner: www-data
         group: www-data
