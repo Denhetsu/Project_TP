@@ -17,15 +17,6 @@
         dest: /opt/app
         force: yes
 
-    - name: Copier les fichiers de l'application vers Nginx
-      copy:
-        src: /opt/app/
-        dest: /var/www/html/
-        owner: www-data
-        group: www-data
-        mode: '0755'
-        remote_src: yes
-
     - name: Redémarrer Nginx
       service:
         name: nginx
