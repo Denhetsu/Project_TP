@@ -39,4 +39,4 @@ jobs:
       # Étape 6 : Déploiement PROD
       - name: Deploy to PROD
         if: github.ref == 'refs/heads/main'
-        run: ansible-playbook ansible/playbooks/deploy-prod.yml -i ansible/inventory/prod.ini
+        run: ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook ansible/playbooks/deploy-prod.yml -i ansible/inventory/prod.ini
