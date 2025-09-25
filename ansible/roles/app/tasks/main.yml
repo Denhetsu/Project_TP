@@ -1,40 +1,37 @@
 ---
-- name: Ensure /opt/app exists
-  file:
-    path: /opt/app
-    state: directory
+ tasks:
 
-- name: Deploy latest code
-  git:
-    repo: "https://github.com/Denhetsu/Project_TP.git"
-    dest: /opt/app
-    version: "{{ git_branch | default('dev') }}"
-    force: yes
+    - name: Installer les dépendances
+      apt:
+        name:
+          - git
+          - nginx
+        state: present
+        update_cache: yes
 
-- name: Make run.sh executable
-  file:
-    path: /opt/app/app/run.sh
-    mode: '0755'
+    - name: Cloner le dépôt depuis GitHub
+      git:
+        repo: 'https://github.com/Denhetsu/Project_TP.git'
+        dest: /opt/app
+        force: yes
 
-- name: Run the application
-  shell: ./run.sh
-  args:
-    chdir: /opt/app/app
+    - name: Générer la page pour Nginx
+      template:
+        src: ../../roles/app/templates/index.html.j2
+        dest: /var/www/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+      vars:
+        git_branch: main
 
-- name: Create confirmation file
-  copy:
-    content: "Deployed on {{ ansible_date_time.date }}\n"
-    dest: /opt/app/DEPLOYMENT_OK.txt
+    - name: Redémarrer Nginx
+      service:
+        name: nginx
+        state: restarted
 
-- name: Générer la page pour Nginx
-  template:
-    src: index.html.j2
-    dest: /var/www/html/index.html
-    owner: www-data
-    group: www-data
-    mode: '0644'
+    - name: Créer fichier de log de confirmation
+      copy:
+        content: "Déploiement PROD terminé le {{ ansible_date_time.date }} à {{ ansible_date_time.time }}"
+        dest: /opt/app/deploy.log
 
-- name: Redémarrer Nginx pour prendre en compte la nouvelle page
-  service:
-    name: nginx
-    state: restarted
