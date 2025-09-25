@@ -21,8 +21,6 @@
         owner: www-data
         group: www-data
         mode: '0644'
-      vars:
-        git_branch: main
 
     - name: Redémarrer Nginx
       service:
