@@ -26,7 +26,15 @@
     content: "Deployed on {{ ansible_date_time.date }}\n"
     dest: /opt/app/DEPLOYMENT_OK.txt
 
-- name: Générer une page de confirmation
+- name: Générer la page pour Nginx
   template:
     src: index.html.j2
-    dest: /opt/app/index.html
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Redémarrer Nginx pour prendre en compte la nouvelle page
+  service:
+    name: nginx
+    state: restarted
