@@ -1,34 +1,34 @@
 ---
- tasks:
-    - name: Installer les dépendances
-      apt:
-        name:
-          - git
-          - nginx
-        state: present
-        update_cache: yes
 
-    - name: Cloner le dépôt depuis GitHub
-      git:
-        repo: 'https://github.com/Denhetsu/Project_TP.git'
-        dest: /opt/app
-        force: yes
+- name: Installer les dépendances
+  apt:
+    name:
+      - git
+      - nginx
+    state: present
+    update_cache: yes
 
-    - name: Générer la page pour Nginx
-      template:
-        src: ../../roles/app/templates/index.html.j2
-        dest: /var/www/html/index.html
-        owner: www-data
-        group: www-data
-        mode: '0644'
+- name: Cloner le dépôt depuis GitHub
+  git:
+    repo: 'https://github.com/Denhetsu/Project_TP.git'
+    dest: /opt/app
+    force: yes
 
-    - name: Redémarrer Nginx
-      service:
-        name: nginx
-        state: restarted
+- name: Générer la page pour Nginx
+  template:
+    src: ../../roles/app/templates/index.html.j2
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
 
-    - name: Créer fichier de log de confirmation
-      copy:
-        content: "Déploiement PROD terminé le {{ ansible_date_time.date }} à {{ ansible_date_time.time }}"
-        dest: /opt/app/deploy.log
+- name: Redémarrer Nginx
+  service:
+    name: nginx
+    state: restarted
+
+- name: Créer fichier de log de confirmation
+  copy:
+    content: "Déploiement PROD terminé le {{ ansible_date_time.date }} à {{ ansible_date_time.time }}"
+    dest: /opt/app/deploy.log
 
