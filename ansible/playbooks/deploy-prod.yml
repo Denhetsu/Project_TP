@@ -7,9 +7,14 @@
       apt:
         name:
           - git
-          - nginx
+          - python3
+          - python3-pip
         state: present
         update_cache: yes
+
+    - name: Installer Flask
+      pip:
+        name: flask
 
     - name: Cloner le dépôt depuis GitHub
       git:
@@ -17,18 +22,27 @@
         dest: /opt/app
         force: yes
 
-    - name: Copier les fichiers de l'application vers Nginx
+    - name: Créer un service systemd pour l'app Flask
       copy:
-        src: /opt/app/
-        dest: /var/www/html/
-        owner: www-data
-        group: www-data
-        mode: '0755'
-        remote_src: yes
+        dest: /etc/systemd/system/app.service
+        content: |
+          [Unit]
+          Description=Flask App
+          After=network.target
 
-    - name: Redémarrer Nginx
-      service:
-        name: nginx
+          [Service]
+          ExecStart=/usr/bin/python3 /opt/app/app.py
+          WorkingDirectory=/opt/app
+          Restart=always
+          User=root
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Activer et démarrer le service Flask
+      systemd:
+        name: app
+        enabled: yes
         state: restarted
 
     - name: Créer fichier de log de confirmation
