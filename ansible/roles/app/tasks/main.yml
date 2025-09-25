@@ -21,11 +21,7 @@
     owner: www-data
     group: www-data
     mode: '0644'
-
-- name: Redémarrer Nginx
-  service:
-    name: nginx
-    state: restarted
+  notify: Redémarrer Nginx
 
 - name: Créer fichier de log de confirmation
   copy:
