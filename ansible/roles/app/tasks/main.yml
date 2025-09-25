@@ -1,32 +1,30 @@
 ---
-- name: Ensure /opt/app exists
-  file:
-    path: /opt/app
-    state: directory
 
-- name: Deploy latest code
+- name: Installer les dépendances
+  apt:
+    name:
+      - git
+      - nginx
+    state: present
+    update_cache: yes
+
+- name: Cloner le dépôt depuis GitHub
   git:
-    repo: "https://github.com/TON-UTILISATEUR/TON-REPO.git"
+    repo: 'https://github.com/Denhetsu/Project_TP.git'
     dest: /opt/app
-    version: "{{ git_branch | default('dev') }}"
     force: yes
 
-- name: Make run.sh executable
-  file:
-    path: /opt/app/app/run.sh
-    mode: '0755'
-
-- name: Run the application
-  shell: ./run.sh
-  args:
-    chdir: /opt/app/app
-
-- name: Create confirmation file
-  copy:
-    content: "Deployed on {{ ansible_date_time.date }}\n"
-    dest: /opt/app/DEPLOYMENT_OK.txt
-
-- name: Générer une page de confirmation
+- name: Générer la page pour Nginx
   template:
-    src: index.html.j2
-    dest: /opt/app/index.html
+    src: ../../roles/app/templates/index.html.j2
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+  notify: Redémarrer Nginx
+
+- name: Créer fichier de log de confirmation
+  copy:
+    content: "Déploiement PROD terminé le {{ ansible_date_time.date }} à {{ ansible_date_time.time }}"
+    dest: /opt/app/deploy.log
+
