@@ -15,7 +15,7 @@ jobs:
 
       # Étape 2 : Setup SSH key pour Ansible
       - name: Setup SSH key
-        uses: webfactory/ssh-agent@v0.8.1
+        uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ github.ref == 'refs/heads/dev' && secrets.DEPLOY_SSH_KEY_DEV || secrets.DEPLOY_SSH_KEY_PROD }}
 
