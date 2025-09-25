@@ -19,7 +19,7 @@ jobs:
         with:
           ssh-private-key: ${{ github.ref == 'refs/heads/dev' && secrets.DEPLOY_SSH_KEY_DEV || secrets.DEPLOY_SSH_KEY_PROD }}
 
-      # Étape 3 : Installer Ansibles
+      # Étape 3 : Installer Ansible
       - name: Install Ansible
         run: |
           sudo apt-get update
