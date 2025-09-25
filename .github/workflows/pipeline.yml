@@ -34,7 +34,7 @@ jobs:
       # Étape 5 : Déploiement DEV
       - name: Deploy to DEV
         if: github.ref == 'refs/heads/dev'
-        run: ansible-playbook ansible/playbooks/deploy-dev.yml -i ansible/inventory/dev.ini
+        run: ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook ansible/playbooks/deploy-dev.yml -i ansible/inventory/dev.ini
 
       # Étape 6 : Déploiement PROD
       - name: Deploy to PROD
